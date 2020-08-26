@@ -40,7 +40,7 @@ import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     TextView textview, tv_offsetx, tv_padding, tv_offsety, tv_numbersize, tv_dragstate;
     EditText et_badgenumber, et_badgetext;
     ImageView imageview, iv_badgecolor, iv_numbercolor;
@@ -59,11 +59,15 @@ public class MainActivity extends AppCompatActivity {
         initListener();
         initBadge();
         swicth_draggable.setChecked(true);
+        findViewById(R.id.btn_hide).setOnClickListener(this);
     }
-
+    QBadgeView badgeView4TextView;
     private void initBadge() {
+        badgeView4TextView = new QBadgeView(this);
+        badgeView4TextView.setBadgeBackground(getResources().getDrawable(R.drawable.red_dot));
+        badgeView4TextView.bindTarget(textview).setBadgeNumber(-1);
         badges = new ArrayList<>();
-        badges.add(new QBadgeView(this).bindTarget(textview).setBadgeNumber(5));
+        badges.add(badgeView4TextView);
         badges.add(new QBadgeView(this).bindTarget(imageview).setBadgeText("PNG").setBadgeTextColor(0x00000000)
                 .setBadgeGravity(Gravity.BOTTOM | Gravity.END).setBadgeBackgroundColor(0xff03a9f4)
                 .setBadgeBackground(getResources().getDrawable(R.drawable.shape_round_rect)));
@@ -347,6 +351,34 @@ public class MainActivity extends AppCompatActivity {
         dialog.setView(gv);
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0x33FFFFFF));
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        int viewId = v.getId();
+        switch (viewId) {
+            case R.id.btn_hide:
+                String tag = (String) v.getTag();
+                if ("0".equals(tag)) {//要隐藏
+                    v.setTag("1");
+                    Button btn = (Button) v;
+                    btn.setText("显示");
+                    badgeView4TextView.setBadgeNumber(99);
+                }
+                else {
+                    v.setTag("0");
+                    Button btn = (Button) v;
+                    btn.setText("隐藏");
+                    badgeView4TextView.setBadgeNumber(100);
+                }
+                break;
+        }
+
     }
 
     interface OnColorClickListener {
